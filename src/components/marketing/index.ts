@@ -1,0 +1,13 @@
+export { Navbar } from './Navbar';
+export { Hero } from './Hero';
+export { Problem } from './Problem';
+export { Pillars } from './Pillars';
+export { AgentAI } from './AgentAI';
+export { HowItWorks } from './HowItWorks';
+export { UseCases } from './UseCases';
+export { Credits } from './Credits';
+export { MLM } from './MLM';
+export { TechStack } from './TechStack';
+export { Pricing } from './Pricing';
+export { FAQ } from './FAQ';
+export { Footer } from './Footer';
