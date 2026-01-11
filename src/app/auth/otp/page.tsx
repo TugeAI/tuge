@@ -2,7 +2,7 @@
 
 /**
  * Page de saisie OTP - Code à 6 chiffres
- * 
+ *
  * UX premium avec :
  * - 6 inputs individuels avec auto-focus
  * - Navigation clavier fluide
@@ -11,7 +11,7 @@
  * - Possibilité de renvoyer le code
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { Suspense, useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { BRAND } from '@/config/brand'
 
@@ -188,17 +188,17 @@ function OtpInput({ value, onChange, onComplete, disabled, hasError, length = OT
 // Composant principal
 // ============================================================================
 
-export default function OtpPage() {
+function OtpPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+
   const [otpValue, setOtpValue] = useState<string[]>(Array(OTP_LENGTH).fill(''))
   const [isVerifying, setIsVerifying] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
-  
+
   // Récupère les données depuis sessionStorage
   const [identifier, setIdentifier] = useState<string | null>(null)
   const [identifierType, setIdentifierType] = useState<'email' | 'phone'>('email')
@@ -466,6 +466,23 @@ export default function OtpPage() {
         }
       `}</style>
     </div>
+  )
+}
+
+export default function OtpPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <MinimalLogo />
+          <div className="w-6 h-0.5 bg-border-primary rounded-full overflow-hidden">
+            <div className="h-full w-1/3 bg-accent-primary/60 rounded-full animate-loading-bar" />
+          </div>
+        </div>
+      </div>
+    }>
+      <OtpPageContent />
+    </Suspense>
   )
 }
 

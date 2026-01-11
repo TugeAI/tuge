@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -104,7 +104,7 @@ const STEP_SEQUENCE: Record<AuthStep, AuthStep | null> = {
   'error': null,
 };
 
-export function ConversationalAuth() {
+function ConversationalAuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -816,6 +816,29 @@ function MailIcon() {
     <svg className="w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
     </svg>
+  );
+}
+
+export function ConversationalAuth() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="auth-cyber-bg" />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <Image
+            src="/logo.svg"
+            alt="Tuge AI"
+            width={48}
+            height={48}
+            className="animate-pulse"
+          />
+          <div className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+          <p className="text-white/50 text-sm">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <ConversationalAuthContent />
+    </Suspense>
   );
 }
 

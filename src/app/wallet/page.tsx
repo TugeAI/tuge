@@ -2,12 +2,12 @@
 
 /**
  * Page Wallet Premium - Gestion des crédits et solde MLM
- * 
+ *
  * Design: Light mode moderne inspiré de la page Profile
  * Features: Sparkline 7j, code parrainage, stats, filtres historique
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { BuyCreditsModal } from '@/components/credits/BuyCreditsModal'
@@ -316,7 +316,7 @@ const SkeletonLoader = () => (
 // COMPOSANT PRINCIPAL
 // ============================================================================
 
-export default function WalletPage() {
+function WalletPageContent() {
   const searchParams = useSearchParams()
   const [wallet, setWallet] = useState<WalletData | null>(null)
   const [mlm, setMlm] = useState<MlmData | null>(null)
@@ -898,5 +898,13 @@ export default function WalletPage() {
         onClose={() => setShowBuyModal(false)} 
       />
     </div>
+  )
+}
+
+export default function WalletPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader />}>
+      <WalletPageContent />
+    </Suspense>
   )
 }
