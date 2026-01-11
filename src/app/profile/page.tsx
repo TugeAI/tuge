@@ -15,7 +15,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { BRAND, getReferralLink } from '@/config/brand'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/supabase/client'
 
 // ============================================================================
 // TYPES
@@ -167,10 +167,7 @@ export default function ProfilePage() {
   })
 
   // Client Supabase pour les actions browser
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient()
 
   // Charge les données du profil
   const loadProfile = useCallback(async () => {

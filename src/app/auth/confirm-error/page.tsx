@@ -2,9 +2,9 @@
 
 /**
  * Page /auth/confirm-error
- * 
+ *
  * Affiche des messages d'erreur clairs lorsque le lien de confirmation ne fonctionne pas.
- * 
+ *
  * Paramètres URL possibles :
  * - ?error=expired : Lien expiré
  * - ?error=already_used : Lien déjà utilisé
@@ -15,6 +15,7 @@
  * - ?error=unexpected : Erreur inattendue
  */
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { BRAND } from '@/config/brand'
@@ -137,7 +138,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
   },
 }
 
-export default function ConfirmErrorPage() {
+function ConfirmErrorContent() {
   const searchParams = useSearchParams()
   const errorType = (searchParams.get('error') || 'unexpected') as ErrorType
   const config = ERROR_CONFIGS[errorType] || ERROR_CONFIGS.unexpected
@@ -212,6 +213,20 @@ export default function ConfirmErrorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ConfirmErrorPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900 flex items-center justify-center p-4">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    }>
+      <ConfirmErrorContent />
+    </Suspense>
   )
 }
 

@@ -1,6 +1,6 @@
 /**
  * Middleware Next.js pour la gestion des routes
- * 
+ *
  * Gère :
  * - Protection des routes nécessitant une authentification
  * - Redirection des utilisateurs authentifiés depuis les pages auth
@@ -38,10 +38,27 @@ export async function middleware(request: NextRequest) {
     },
   })
 
+  // Si Supabase n'est pas configuré, permet l'accès aux routes publiques
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn('[Middleware] Supabase not configured - allowing public access')
+    // Ignore les routes publiques
+    if (PUBLIC_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
+      return NextResponse.next()
+    }
+    // Pour les routes protégées, redirige vers /auth
+    const isProtectedRoute = PROTECTED_ROUTES.some(route =>
+      pathname === route || pathname.startsWith(route + '/')
+    )
+    if (isProtectedRoute) {
+      return NextResponse.redirect(new URL('/auth', request.url))
+    }
+    return NextResponse.next()
+  }
+
   // Crée le client Supabase avec gestion des cookies
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -62,7 +79,7 @@ export async function middleware(request: NextRequest) {
 
   // Gestion des routes d'authentification (signup, login)
   const isAuthRoute = AUTH_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))
-  
+
   if (isAuthRoute) {
     // Si utilisateur déjà authentifié, redirige vers /agent
     if (user && !error) {
@@ -78,7 +95,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Vérifie si c'est une route protégée
-  const isProtectedRoute = PROTECTED_ROUTES.some(route => 
+  const isProtectedRoute = PROTECTED_ROUTES.some(route =>
     pathname === route || pathname.startsWith(route + '/')
   )
 
@@ -109,5 +126,3 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
-
-

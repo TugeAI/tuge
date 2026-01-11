@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -21,16 +21,16 @@ interface AuthFormProps {
   initialToken?: string | null;
 }
 
-export function AuthForm({ initialStep = 'email', initialToken }: AuthFormProps) {
+function AuthFormContent({ initialStep = 'email', initialToken }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [step, setStep] = useState<AuthStep>(initialStep);
   const [identifier, setIdentifier] = useState('');
   const [identifierType, setIdentifierType] = useState<'email' | 'phone'>('email');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const referralCode = searchParams.get('ref');
   const redirectPath = searchParams.get('redirect') || '/agent';
 
@@ -278,6 +278,27 @@ export function AuthForm({ initialStep = 'email', initialToken }: AuthFormProps)
         </div>
       </div>
     </div>
+  );
+}
+
+export function AuthForm(props: AuthFormProps) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-secondary)]">
+        <div className="w-full max-w-md flex flex-col items-center gap-4">
+          <Image
+            src="/logo.svg"
+            alt="Tuge AI"
+            width={48}
+            height={48}
+            className="animate-pulse"
+          />
+          <div className="w-8 h-8 border-2 border-[var(--brand-violet)]/30 border-t-[var(--brand-violet)] rounded-full animate-spin" />
+        </div>
+      </div>
+    }>
+      <AuthFormContent {...props} />
+    </Suspense>
   );
 }
 
