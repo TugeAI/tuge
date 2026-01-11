@@ -1,5 +1,5 @@
 /**
- * Middleware Next.js pour la gestion des routes
+ * Proxy Next.js pour la gestion des routes
  *
  * Gère :
  * - Protection des routes nécessitant une authentification
@@ -23,7 +23,7 @@ const PUBLIC_ROUTES = ['/', '/auth', '/api', '/agent', '/onboarding']
 // Assets et fichiers statiques à ignorer
 const IGNORED_PATHS = ['/_next', '/favicon.ico', '/logo.svg', '/og-image.png']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Ignore les assets et fichiers statiques
@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
 
   // Si Supabase n'est pas configuré, permet l'accès aux routes publiques
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.warn('[Middleware] Supabase not configured - allowing public access')
+    console.warn('[Proxy] Supabase not configured - allowing public access')
     // Ignore les routes publiques
     if (PUBLIC_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
       return NextResponse.next()
