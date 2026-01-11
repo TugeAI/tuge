@@ -16,13 +16,23 @@ import type { Database } from './types'
 /**
  * Crée un client Supabase serveur avec gestion des cookies
  * Utilisé pour les requêtes authentifiées où l'utilisateur a une session
+ *
+ * Note: Si les variables d'environnement ne sont pas configurées,
+ * retourne un client avec des valeurs par défaut qui échouera gracieusement
  */
 export async function createClient() {
   const cookieStore = await cookies()
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn('[Supabase Server] Environment variables not configured. Supabase features will not work.')
+  }
+
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
