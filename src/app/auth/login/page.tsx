@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: 'Connectez-vous à votre compte Tuge AI pour accéder à votre Agent IA personnel.',
 };
 
+// Force dynamic rendering to avoid build-time Supabase errors
+export const dynamic = 'force-dynamic';
+
 function LoginPageContent() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-secondary)] relative overflow-hidden">
