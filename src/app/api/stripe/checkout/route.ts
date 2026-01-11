@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
-import { stripe, isStripeConfigured } from '@/lib/stripe/client'
+import { getStripe, isStripeConfigured } from '@/lib/stripe/client'
 import { BILLING, getPackById } from '@/lib/billingConfig'
 
 // Schéma de validation
@@ -87,6 +87,9 @@ export async function POST(request: NextRequest) {
 
     // Récupère l'email de l'utilisateur
     const userEmail = user.email || undefined
+
+    // Récupère le client Stripe
+    const stripe = getStripe()
 
     // Crée la session Stripe Checkout
     const session = await stripe.checkout.sessions.create({

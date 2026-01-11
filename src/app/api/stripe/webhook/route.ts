@@ -10,7 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe, constructWebhookEvent } from '@/lib/stripe/client'
+import { constructWebhookEvent } from '@/lib/stripe/client'
 import { createAdminClient } from '@/lib/supabase/server'
 import type Stripe from 'stripe'
 
